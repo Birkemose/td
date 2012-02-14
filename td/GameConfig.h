@@ -18,6 +18,8 @@
 
 #define GAME_COLLISION_TERRAIN              ( id )1
 
+// old setups
+
 // Supported Autorotations:
 //		None,
 //		UIViewController,
