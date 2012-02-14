@@ -10,6 +10,23 @@
 
 #import "pgeTerrain.h"
 
+@interface AlphaCutSprite : CCSprite @end
+@implementation AlphaCutSprite
+
+-(void)draw
+{
+	glDisable(GL_BLEND);
+	glEnable(GL_ALPHA_TEST);
+	glAlphaFunc(GL_GREATER, 0.5);
+	
+	[super draw];
+	
+	glEnable(GL_BLEND);
+	glDisable(GL_ALPHA_TEST);
+}
+
+@end
+
 // ----------------------------------------------------------
 // consts
 
@@ -73,7 +90,7 @@
 
     // add a border to the terrain if needed
     // if you got the offset below right, this shold be fully visible, and drawn along edges
-    [ m_sampler setBorderValue:TERRAIN_PIXEL_SIZE ];
+    [ m_sampler setBorderValue:0.0 ];
        
     // set sampler output range
     // this defines what the output range of the generated chipmunk geometry is, and is the range within the tilecache works
@@ -106,6 +123,13 @@
     // finally define some characteristics on the segments created
     m_cache.segmentRadius = TERRAIN_THICKNESS;
     m_cache.simplifyThreshold = TERRAIN_GEOMETRY_REDUCTION;
+		
+		CGSize size = CGSizeMake(m_sampler.width, m_sampler.height);
+		m_texture = [[CCTexture2D alloc] initWithData:[m_sampler.pixelData bytes] pixelFormat:kCCTexture2DPixelFormat_A8 pixelsWide:size.width pixelsHigh:size.height contentSize:size];
+		CCSprite *sprite = [AlphaCutSprite spriteWithTexture:m_texture];
+		sprite.position = ccp(240, 160);
+		sprite.scale = TERRAIN_PIXEL_SIZE;
+		[self addChild:sprite];
      
     // done
     return( self );
@@ -138,20 +162,8 @@
 // I have been unable to find any CGContextReadPixel that would support transformations, so lets do it manually
 
 -( BOOL )pointInsideTerrain:( CGPoint )pos {
-    int pointer;
-    unsigned char* data;
-    
-    // transform output ( in this example == screen ) to image coordinates
-    pos = ccp( pos.x * m_size.width / m_winSize.width, m_size.height - ( pos.y * m_size.height / m_winSize.height ) );
-    
-    // get an ffset into image data ( 1 byte greyscale )
-    pointer = ( int )pos.x + ( ( int )pos.y * m_size.width );
-    
-    // get a pointer to all the lovely data
-    data = ( unsigned char* )[ m_sampler.pixelData bytes ];
-    
-    // check if pixel is terrain
-    return( IS_TERRAIN( data[ pointer ] ) );
+	// Check that the density of the terrain is over 0.5
+	return ([m_sampler sample:pos] > 0.5);
 }
 
 // ----------------------------------------------------------
@@ -164,12 +176,14 @@
     float radius = diameter / 2;
     
     // draw a black cicel to add terrain
-    CGContextSetGrayFillColor( m_sampler.context, 0.0, 1.0 );
+    CGContextSetGrayFillColor( m_sampler.context, 1.0, 1.0 );
     CGContextFillEllipseInRect( m_sampler.context, CGRectMake( pos.x - radius / 2, pos.y - radius / 2, diameter, diameter ) );
 
     // mark a slightly larger rect as dirty, to make sure some rounding doesnt ruin terrain
     [ m_cache markDirtyRect:cpBBNew( pos.x - radius - 1, pos.y - radius - 1, pos.x + radius + 1, pos.y + radius + 1 ) ];
 
+		glBindTexture(GL_TEXTURE_2D, m_texture.name);
+		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, m_sampler.width, m_sampler.height, GL_ALPHA, GL_UNSIGNED_BYTE, [m_sampler.pixelData bytes]);
 }
 
 // ----------------------------------------------------------
@@ -178,12 +192,14 @@
     float radius = diameter / 2;
 
     // draw a white cicel to remove terrain
-    CGContextSetGrayFillColor( m_sampler.context, 1.0, 1.0 );
+    CGContextSetGrayFillColor( m_sampler.context, 0.0, 1.0 );
     CGContextFillEllipseInRect( m_sampler.context, CGRectMake( pos.x - radius / 2, pos.y - radius / 2, diameter, diameter ) );
     
     // mark a slightly larger rect as dirty, to make sure some rounding doesnt ruin terrain
     [ m_cache markDirtyRect:cpBBNew( pos.x - radius - 1, pos.y - radius - 1, pos.x + radius + 1, pos.y + radius + 1 ) ];
 
+		glBindTexture(GL_TEXTURE_2D, m_texture.name);
+		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, m_sampler.width, m_sampler.height, GL_ALPHA, GL_UNSIGNED_BYTE, [m_sampler.pixelData bytes]);
 }
 
 // ----------------------------------------------------------
