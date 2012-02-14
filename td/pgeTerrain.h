@@ -17,7 +17,7 @@
 // ----------------------------------------------------------
 // defines
 
-#define TERRAIN_TILE_SIZE               128                 // a good number to use
+#define TERRAIN_TILE_SIZE               64                 // a good number to use
 #define TERRAIN_PIXEL_SIZE              2                   // scale from terrain image to output
 
 #define TERRAIN_THICKNESS               1.0f                // thickness of terrain segments
@@ -37,6 +37,7 @@
     ChipmunkBasicTileCache*         m_cache;                // terrain cache 
     CGSize                          m_size;                 // size of terrain image 
     CGSize                          m_winSize;              // window size
+		CCTexture2D*                      m_texture;
 }
 
 // ----------------------------------------------------------
