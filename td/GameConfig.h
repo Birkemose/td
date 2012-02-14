@@ -1,15 +1,23 @@
 //
 //  GameConfig.h
-//  td
+//  terrainDemo
 //
-//  Created by Lars Birkemose on 14/02/12.
-//  Copyright __MyCompanyName__ 2012. All rights reserved.
+//  Created by Lars Birkemose on 03/02/12.
+//  Copyright Protec Electronics 2012. All rights reserved.
 //
 
 #ifndef __GAME_CONFIG_H
 #define __GAME_CONFIG_H
 
-//
+// basic setups
+
+#define GAME_DEBUG_DRAW                     1
+#define GAME_FPS                            30.0f
+
+// misc game defines
+
+#define GAME_COLLISION_TERRAIN              ( id )1
+
 // Supported Autorotations:
 //		None,
 //		UIViewController,

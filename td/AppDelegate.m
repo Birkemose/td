@@ -1,9 +1,9 @@
 //
 //  AppDelegate.m
-//  td
+//  terrainDemo
 //
-//  Created by Lars Birkemose on 14/02/12.
-//  Copyright __MyCompanyName__ 2012. All rights reserved.
+//  Created by Lars Birkemose on 03/02/12.
+//  Copyright Protec Electronics 2012. All rights reserved.
 //
 
 #import "cocos2d.h"
@@ -70,8 +70,7 @@
 	[director setOpenGLView:glView];
 	
 //	// Enables High Res mode (Retina Display) on iPhone 4 and maintains low res on all other devices
-//	if( ! [director enableRetinaDisplay:YES] )
-//		CCLOG(@"Retina Display Not supported");
+	// if( ! [director enableRetinaDisplay:YES] ) CCLOG(@"Retina Display Not supported");
 	
 	//
 	// VERY IMPORTANT:
@@ -82,13 +81,9 @@
 	// By default, this template only supports Landscape orientations.
 	// Edit the RootViewController.m file to edit the supported orientations.
 	//
-#if GAME_AUTOROTATION == kGameAutorotationUIViewController
-	[director setDeviceOrientation:kCCDeviceOrientationPortrait];
-#else
 	[director setDeviceOrientation:kCCDeviceOrientationLandscapeLeft];
-#endif
 	
-	[director setAnimationInterval:1.0/60];
+	[director setAnimationInterval: 1.0f / GAME_FPS ];
 	[director setDisplayFPS:YES];
 	
 	
