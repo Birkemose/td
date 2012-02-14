@@ -48,8 +48,8 @@
     m_space.damping = WORLD_DAMPING;
     m_space.iterations = 5;
     // create terrain
-    m_terrain = [ pgeTerrain terrainWithSpace:m_space andImage:@"terraindemo.bmp" ];
-    [ self addChild:m_terrain ];
+    m_terrain = [ pgeTerrain terrainWithSpace:m_space andImage:@"terraindemo.png" ];
+    [ self addChild:m_terrain z:-1 ];
     // done
     return( self );
 }
